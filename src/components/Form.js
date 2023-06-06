@@ -1,6 +1,7 @@
 import { useState } from "react"
+import axios from "axios";
 
-const Form = () => {
+const Form = ({addEmployees, employees}) => {
 
 const [name, setName] = useState("");
 const [surname, setSurname] = useState("");
@@ -12,10 +13,41 @@ const [position, setPosition] = useState("");
 const [cellPhone, setCellPhone] = useState("");
 
 
+
+const handleSubmit = async() => {
+    
+
+    try {
+        const response = await axios.post('http://localhost:3005/post/', employees);
+        console.log(response.data); 
+        
+      } catch (error) {
+        console.error(error);
+      }
+    };
+  
+
+
+const submitForm = (event)=>{
+    event.preventDefault()
+    addEmployees(name,
+        surname,
+        email,
+        image,
+        dateOfBirth,
+        biography,
+        position,
+        cellPhone)
+
+        handleSubmit();
+}
+
+
+
     return(
         <div className="form-container">
             <h1>Employee Details</h1>
-            <form >
+            <form method="post" action="http://localhost:3005/Employee/" >
                 <div className="form-content" >
                     <label htmlFor="name"> Name :</label>
                     <input id="name" type="text" placeholder="Enter Your Name" onChange={(event)=> {
@@ -59,7 +91,7 @@ const [cellPhone, setCellPhone] = useState("");
                         setCellPhone(event.target.value)
                     }}/>
 
-                    <input type="submit" className="submit-btn" />
+                    <input type="submit" className="submit-btn" onClick={submitForm} />
 
 
                 </div>
