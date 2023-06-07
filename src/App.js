@@ -7,8 +7,18 @@ import axios from 'axios';
 
 function App() {
   const [employees, setEmployees] = useState([]) 
+  const [editID, setEditID] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
+  const handleImageUpload = (image) => {
+    setSelectedImage(image);
+  };
 
+  const editItem = (id) => {
+    setIsEditing(true);
+    setEditID(id);
+  };
   const fetchEmployees = () => {
 
   axios.get('http://localhost:3500/employees')
@@ -36,8 +46,30 @@ console.log("this is the data in the employees array")
 
   return (
     <div className="App">
-      <Form />
-     <DisplayDetails employees={employees} />
+      <Form data={{
+    employees: employees,
+    setEmployees: setEmployees,
+    setEditID: setEditID,
+    setIsEditing: setIsEditing,
+    editID: editID,
+    editItem : editItem ,
+    isEditing: isEditing,
+    selectedImage:selectedImage,
+    setSelectedImage : setSelectedImage,
+    handleImageUpload:handleImageUpload
+  }}/>
+     <DisplayDetails data={{
+    employees: employees,
+    setEmployees: setEmployees,
+    setEditID: setEditID,
+    setIsEditing: setIsEditing,
+    editID: editID,
+    editItem : editItem ,
+    isEditing: isEditing,
+    selectedImage:selectedImage,
+    setSelectedImage : setSelectedImage,
+    handleImageUpload:handleImageUpload
+  }} />
     </div>
   );
 };

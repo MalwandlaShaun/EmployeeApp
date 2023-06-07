@@ -1,9 +1,13 @@
 import { Table } from "./Table";
 
-function DisplayDetails({ employees }) {
+
+function DisplayDetails({ data }) {
+
+
   return (
     <div className="display-container">
-      <Table employees={employees} />
+      
+      <Table data={data} />
     </div>
   );
 }

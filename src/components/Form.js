@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
 import axios from "axios";
 
-const Form = () => {
+const Form = ({data}) => {
+
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
   const [email, setEmail] = useState("");
@@ -10,30 +12,80 @@ const Form = () => {
   const [biography, setBiography] = useState("");
   const [position, setPosition] = useState("");
   const [cellPhone, setCellPhone] = useState("");
+  const [currentEmployee, setCurrentEmployee] = useState({});
+  const {
+    employees,
+    setEmployees,
+    setEditID,
+    setIsEditing,
+    editID,
+    editItem,
+    isEditing,
+    selectedImage, 
+    setSelectedImage,
+   
+  } = data;
 
 
+  useEffect(() => {
+    if (isEditing && editID) {
+      const employeeToEdit = employees.find((employee) => employee.id === editID);
+      setCurrentEmployee(employeeToEdit);
+    } else {
+      setCurrentEmployee({});
+    }
+  }, [isEditing, editID, employees]);
+  
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      const image = reader.result;
+      setSelectedImage(image);
+    };
+
+    if (file) {
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSubmit = async () => {
     try {
-      const response = await axios.post(
-        `http://localhost:3500/employees`,
-        {
+      const employeeData = {
           id: new Date().getTime(),
           name,
           surname,
           email,
-          image,
+          image: selectedImage, // Use selectedImage in the form data
           dateOfBirth,
           biography,
           position,
           cellPhone,
-        }
-      );
-      console.log(response.data);
+      };
+  
+      if (isEditing) {
+        await axios.put(`/employees/${currentEmployee.id}`, employeeData);
+        // Handle successful update
+      } else {
+        await axios.post(`/employees`, employeeData);
+        // Handle successful create
+      }
+  
+      // Reset the form fields
+      setName("edit this data");
+      setSurname("");
+      setEmail("");
+      setImage(null);
+      setDateOfBirth("");
+      setBiography("");
+      setPosition("");
+      setCellPhone("");
     } catch (error) {
       console.error(error);
     }
   };
+  
 
   const submitForm = (event) => {
     event.preventDefault();
@@ -44,6 +96,7 @@ const Form = () => {
   return (
     <div className="form-container">
       <h1>Employee Details</h1>
+
       <form method="post" action="http://localhost:3005/Employee/" runat="server" >
         <div className="form-content">
           <label htmlFor="name"> Name :</label>
@@ -76,24 +129,15 @@ const Form = () => {
             }}
           />
 
-          <div className="input-file">
-            <label htmlFor="name"> Upload image :</label>
+
+            <label htmlFor="name">Upload image:</label>
             <input
-             id="frame"
+              id="frame"
               type="file"
               name="image"
-              onChange={(event) => {
-      const [file] = document.getElementById('frame').files
-
-      console.log(file.name)
-      console.log("This is the image file"+file)
-      if (file) {
-      setImage(file.name);
-      console.log()
-          //console.log(document.getElementById('blah').src = window.URL.createObjectURL(file))
-      }
-              }}
+              onChange={handleImageUpload} // Use the handleImageUpload function
             />
+          
             
 
           <label htmlFor="name"> Date Of Birth :</label>
@@ -141,7 +185,7 @@ const Form = () => {
 
           <input type="submit" className="submit-btn" onClick={submitForm} />
         </div>
-        </div>
+        
       </form>
     </div>
   );

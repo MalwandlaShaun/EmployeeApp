@@ -1,34 +1,42 @@
-import React from "react";
+import React, {useState} from "react";
 import axios from "axios";
 import { BsFillTrashFill, BsFillPencilFill } from "react-icons/bs";
 
 import "./Table.css";
 
-export const Table = ({employees}) => {
+export const Table = ({data}) => {
 
+  const {
+    employees,
+    setEmployees,
+    setEditID,
+    setIsEditing,
+    editID,
+    editItem,
+    isEditing
+  } = data;
+ 
+  
   console.log("This data is from Table.js")
   console.log(employees)
 
   axios.defaults.baseURL = 'http://localhost:3500';
 
-  
-  const handleUpdate = (id)=>{
-    const updatedEmployee = {
-      name: 'John Doe',
-      position: 'Manager',
-      // Add other updated properties here
-    };
+
+ 
+
+
+
+  const removeItem = (id) => {
     
-    axios.put(`/employees/${id}`, updatedEmployee)
-      .then(response => {
-        console.log('Employee updated:', response.data);
-      })
-      .catch(error => {
-        console.error('Error updating employee:', error);
-      });
-    
+    const newEployees = employees.filter((item) => {
+      return item.id !== id;
+    })
+    setEmployees(newEployees)
   }
+ 
     const handleDelete = (id) => {
+
       axios.delete(`/employees/${id}`)
       .then(response => {
         console.log('Employee deleted:', response.data);
@@ -37,6 +45,7 @@ export const Table = ({employees}) => {
         console.error('Error deleting employee:', error);
       });
     
+      removeItem(id)
     }
   return (
     <div className="table-wrapper">
@@ -79,11 +88,7 @@ export const Table = ({employees}) => {
                     />
                     <BsFillPencilFill
                       className="edit-btn"
-                      onClick={() => 
-                        
-                        
-                        
-                        handleUpdate(employee.id)}
+                      onClick={() => editItem(employee.id)}
                     />
                   </span>
                 </td>
@@ -93,5 +98,4 @@ export const Table = ({employees}) => {
         </tbody>
       </table>
     </div>
-  );
-};
+  )}
