@@ -3,11 +3,6 @@ import DisplayDetails from "./components/DisplayDetails"
 import './App.css';
 import { useState, useEffect } from 'react';
 
-//import fs from 'fs-extra';
-
-
-const url = 'http://localhost:3005/Employee/'
-
 function App() {
 
   const [employees, setEmployees] = useState([])
@@ -15,7 +10,7 @@ function App() {
 
   const fetchEmployees = async () => {
       
-    const response = await fetch("http://localhost:3005/Employee/");
+    const response = await fetch("http://localhost:3500/employees");
     const data = await response.json();
     
     console.log(data)
@@ -53,21 +48,11 @@ function App() {
   console.log(employees)
 
 
-  // const arrayToJson = (employees, filename) => {
-  //   const jsonString = JSON.stringify(array, null, 2);
-  //   fs.writeFile(filename, jsonString, (err) => {
-  //     if (err) {
-  //       console.error('Error writing JSON file:', err);
-  //     } else {
-  //       console.log('JSON file has been saved.');
-  //     }
-  //   });
-  // };
-
 
   return (
     <div className="App">
      <Form addEmployees={addEmployees}/>
+     <DisplayDetails employees={employees} />
     </div>
   );
 };

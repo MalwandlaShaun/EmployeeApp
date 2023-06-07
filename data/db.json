@@ -1,0 +1,36 @@
+{
+  "employees": [
+    {
+      "id": 1,
+      "name": "malwandla",
+      "surname": "Hlungwani",
+      "email": "hlungwanimalwandlashaun@gmail.com",
+      "image": "#",
+      "dateOfBirth": "1998-03-26",
+      "biography": "I love jesus",
+      "position": "software developer",
+      "cellPhone": "0609439412"
+    },
+    [
+      "chantell",
+      "hlungwani",
+      "ntivochantell@gmail.com",
+      "C:\\fakepath\\myWork.jpg",
+      "2003-01-08",
+      "I love Jesus too",
+      "smart invester",
+      "54554"
+    ],
+    {
+      "name": "chantell",
+      "surname": "hlungwani",
+      "email": "ntivochantell@gmail.com",
+      "image": "C:\\fakepath\\myWork.jpg",
+      "dateOfBirth": "2003-01-08",
+      "biography": "I love Jesus too",
+      "position": "smart invester",
+      "cellPhone": "54554",
+      "id": 3
+    }
+  ]
+}

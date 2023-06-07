@@ -13,12 +13,17 @@ const [position, setPosition] = useState("");
 const [cellPhone, setCellPhone] = useState("");
 
 
-
+const employeesPost = {name,
+    surname,
+    email,
+    image,
+    dateOfBirth,
+    biography,
+    position,
+    cellPhone}
 const handleSubmit = async() => {
-    
-
     try {
-        const response = await axios.post('http://localhost:3005/post/', employees);
+        const response = await axios.post('http://localhost:3500/employees', employeesPost);
         console.log(response.data); 
         
       } catch (error) {
