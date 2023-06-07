@@ -1,10 +1,43 @@
 import React from "react";
-
+import axios from "axios";
 import { BsFillTrashFill, BsFillPencilFill } from "react-icons/bs";
 
 import "./Table.css";
 
-export const Table = ({ rows, deleteRow, editRow }) => {
+export const Table = ({employees}) => {
+
+  console.log("This data is from Table.js")
+  console.log(employees)
+
+  axios.defaults.baseURL = 'http://localhost:3500';
+
+  
+  const handleUpdate = (id)=>{
+    const updatedEmployee = {
+      name: 'John Doe',
+      position: 'Manager',
+      // Add other updated properties here
+    };
+    
+    axios.put(`/employees/${id}`, updatedEmployee)
+      .then(response => {
+        console.log('Employee updated:', response.data);
+      })
+      .catch(error => {
+        console.error('Error updating employee:', error);
+      });
+    
+  }
+    const handleDelete = (id) => {
+      axios.delete(`/employees/${id}`)
+      .then(response => {
+        console.log('Employee deleted:', response.data);
+      })
+      .catch(error => {
+        console.error('Error deleting employee:', error);
+      });
+    
+    }
   return (
     <div className="table-wrapper">
       <table className="table">
@@ -21,28 +54,32 @@ export const Table = ({ rows, deleteRow, editRow }) => {
           </tr>
         </thead>
         <tbody>
-          {rows.map((row, idx) => {
-            const statusText =
-              row.status.charAt(0).toUpperCase() + row.status.slice(1);
+          {employees.map((employee, idx) => {
 
+           
             return (
               <tr key={idx}>
-                <td>{row.page}</td>
-                <td className="expand">{row.description}</td>
-                <td>
-                  <span className={`label label-${row.status}`}>
-                    {statusText}
-                  </span>
-                </td>
+                <td>text</td>
+                <td className="expand">{employee.biography}</td>
+                <td>{employee.name}</td>
+                <td>{employee.surname}</td>
+                <td>{employee.email}</td>
+                <td>{employee.dateOfBirth}</td>
+                <td>{employee.position}</td>
+                <td>{employee.cellPhone}</td>
+                
+
+
+
                 <td className="fit">
                   <span className="actions">
                     <BsFillTrashFill
                       className="delete-btn"
-                      onClick={() => deleteRow(idx)}
+                      onClick={handleDelete(employee.id)}
                     />
                     <BsFillPencilFill
                       className="edit-btn"
-                      onClick={() => editRow(idx)}
+                      onClick={handleUpdate(employee.id)}
                     />
                   </span>
                 </td>
