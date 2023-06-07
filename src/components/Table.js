@@ -59,7 +59,7 @@ export const Table = ({employees}) => {
            
             return (
               <tr key={idx}>
-                <td>text</td>
+                <td><img id="frame" src={employee.image} alt={employee.image} width="100px" height="100px"/></td>
                 <td className="expand">{employee.biography}</td>
                 <td>{employee.name}</td>
                 <td>{employee.surname}</td>
@@ -79,7 +79,11 @@ export const Table = ({employees}) => {
                     />
                     <BsFillPencilFill
                       className="edit-btn"
-                      onClick={() => handleUpdate(employee.id)}
+                      onClick={() => 
+                        
+                        
+                        
+                        handleUpdate(employee.id)}
                     />
                   </span>
                 </td>

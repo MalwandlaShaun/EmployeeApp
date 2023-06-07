@@ -5,7 +5,7 @@ const Form = () => {
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
   const [email, setEmail] = useState("");
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState(null);
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [biography, setBiography] = useState("");
   const [position, setPosition] = useState("");
@@ -44,7 +44,7 @@ const Form = () => {
   return (
     <div className="form-container">
       <h1>Employee Details</h1>
-      <form method="post" action="http://localhost:3005/Employee/">
+      <form method="post" action="http://localhost:3005/Employee/" runat="server" >
         <div className="form-content">
           <label htmlFor="name"> Name :</label>
           <input
@@ -79,13 +79,22 @@ const Form = () => {
           <div className="input-file">
             <label htmlFor="name"> Upload image :</label>
             <input
+             id="frame"
               type="file"
               name="image"
               onChange={(event) => {
-                setImage(event.target.value);
+      const [file] = document.getElementById('frame').files
+
+      console.log(file.name)
+      console.log("This is the image file"+file)
+      if (file) {
+      setImage(file.name);
+      console.log()
+          //console.log(document.getElementById('blah').src = window.URL.createObjectURL(file))
+      }
               }}
             />
-          </div>
+            
 
           <label htmlFor="name"> Date Of Birth :</label>
           <input
@@ -131,6 +140,7 @@ const Form = () => {
           />
 
           <input type="submit" className="submit-btn" onClick={submitForm} />
+        </div>
         </div>
       </form>
     </div>
