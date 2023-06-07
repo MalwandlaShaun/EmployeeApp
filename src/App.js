@@ -13,14 +13,12 @@ function App() {
 
   axios.get('http://localhost:3500/employees')
     .then(response => {
-      // Handle the successful response here
       const data = response.data;
       console.log(data);
       
       setEmployees(data)
     })
     .catch(error => {
-      // Handle the error here
       console.error(error);
     });
   

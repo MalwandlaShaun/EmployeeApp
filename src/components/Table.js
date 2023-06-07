@@ -75,11 +75,11 @@ export const Table = ({employees}) => {
                   <span className="actions">
                     <BsFillTrashFill
                       className="delete-btn"
-                      onClick={handleDelete(employee.id)}
+                      onClick={() => handleDelete(employee.id)}
                     />
                     <BsFillPencilFill
                       className="edit-btn"
-                      onClick={handleUpdate(employee.id)}
+                      onClick={() => handleUpdate(employee.id)}
                     />
                   </span>
                 </td>

@@ -11,16 +11,7 @@ const Form = () => {
   const [position, setPosition] = useState("");
   const [cellPhone, setCellPhone] = useState("");
 
-  const employeesPost = {
-    name,
-    surname,
-    email,
-    image,
-    dateOfBirth,
-    biography,
-    position,
-    cellPhone,
-  };
+
 
   const handleSubmit = async () => {
     try {
