@@ -73,7 +73,7 @@ const Form = ({data}) => {
       }
   
       // Reset the form fields
-      setName("edit this data");
+      setName("");
       setSurname("");
       setEmail("");
       setImage(null);
