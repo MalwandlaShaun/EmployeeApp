@@ -2,40 +2,30 @@ import { useState, useEffect } from "react";
 
 import axios from "axios";
 
-const Form = ({data}) => {
-
+const Form = ({ data }) => {
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
   const [email, setEmail] = useState("");
-  const [image, setImage] = useState(null);
+  // const [image, setImage] = useState(null);
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [biography, setBiography] = useState("");
   const [position, setPosition] = useState("");
   const [cellPhone, setCellPhone] = useState("");
   const [currentEmployee, setCurrentEmployee] = useState({});
-  const {
-    employees,
-    setEmployees,
-    setEditID,
-    setIsEditing,
-    editID,
-    editItem,
-    isEditing,
-    selectedImage, 
-    setSelectedImage,
-   
-  } = data;
-
+  const { employees, editID, isEditing, selectedImage, setSelectedImage } =
+    data;
 
   useEffect(() => {
     if (isEditing && editID) {
-      const employeeToEdit = employees.find((employee) => employee.id === editID);
+      const employeeToEdit = employees.find(
+        (employee) => employee.id === editID
+      );
       setCurrentEmployee(employeeToEdit);
     } else {
       setCurrentEmployee({});
     }
   }, [isEditing, editID, employees]);
-  
+
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     const reader = new FileReader();
@@ -53,17 +43,17 @@ const Form = ({data}) => {
   const handleSubmit = async () => {
     try {
       const employeeData = {
-          id: new Date().getTime(),
-          name,
-          surname,
-          email,
-          image: selectedImage, // Use selectedImage in the form data
-          dateOfBirth,
-          biography,
-          position,
-          cellPhone,
+        id: new Date().getTime(),
+        name,
+        surname,
+        email,
+        image: selectedImage, // Use selectedImage in the form data
+        dateOfBirth,
+        biography,
+        position,
+        cellPhone,
       };
-  
+
       if (isEditing) {
         await axios.put(`/employees/${currentEmployee.id}`, employeeData);
         // Handle successful update
@@ -71,12 +61,12 @@ const Form = ({data}) => {
         await axios.post(`/employees`, employeeData);
         // Handle successful create
       }
-  
+
       // Reset the form fields
       setName("");
       setSurname("");
       setEmail("");
-      setImage(null);
+      // setImage(null);
       setDateOfBirth("");
       setBiography("");
       setPosition("");
@@ -85,7 +75,6 @@ const Form = ({data}) => {
       console.error(error);
     }
   };
-  
 
   const submitForm = (event) => {
     event.preventDefault();
@@ -97,7 +86,11 @@ const Form = ({data}) => {
     <div className="form-container">
       <h1>Employee Details</h1>
 
-      <form method="post" action="http://localhost:3005/Employee/" runat="server" >
+      <form
+        method="post"
+        action="http://localhost:3005/Employee/"
+        runat="server"
+      >
         <div className="form-content">
           <label htmlFor="name"> Name :</label>
           <input
@@ -129,16 +122,13 @@ const Form = ({data}) => {
             }}
           />
 
-
-            <label htmlFor="name">Upload image:</label>
-            <input
-              id="frame"
-              type="file"
-              name="image"
-              onChange={handleImageUpload} // Use the handleImageUpload function
-            />
-          
-            
+          <label htmlFor="name">Upload image:</label>
+          <input
+            id="frame"
+            type="file"
+            name="image"
+            onChange={handleImageUpload} // Use the handleImageUpload function
+          />
 
           <label htmlFor="name"> Date Of Birth :</label>
           <input
@@ -185,7 +175,6 @@ const Form = ({data}) => {
 
           <input type="submit" className="submit-btn" onClick={submitForm} />
         </div>
-        
       </form>
     </div>
   );

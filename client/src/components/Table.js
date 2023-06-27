@@ -1,52 +1,36 @@
-import React, {useState} from "react";
+import React from "react";
 import axios from "axios";
 import { BsFillTrashFill, BsFillPencilFill } from "react-icons/bs";
 
 import "./Table.css";
 
-export const Table = ({data}) => {
+export const Table = ({ data }) => {
+  const { employees, setEmployees, editItem } = data;
 
-  const {
-    employees,
-    setEmployees,
-    setEditID,
-    setIsEditing,
-    editID,
-    editItem,
-    isEditing
-  } = data;
- 
-  
-  console.log("This data is from Table.js")
-  console.log(employees)
+  console.log("This data is from Table.js");
+  console.log(employees);
 
-  axios.defaults.baseURL = 'http://localhost:3500';
-
-
- 
-
-
+  axios.defaults.baseURL = "http://localhost:3500";
 
   const removeItem = (id) => {
-    
     const newEployees = employees.filter((item) => {
       return item.id !== id;
-    })
-    setEmployees(newEployees)
-  }
- 
-    const handleDelete = (id) => {
+    });
+    setEmployees(newEployees);
+  };
 
-      axios.delete(`/employees/${id}`)
-      .then(response => {
-        console.log('Employee deleted:', response.data);
+  const handleDelete = (id) => {
+    axios
+      .delete(`/employees/${id}`)
+      .then((response) => {
+        console.log("Employee deleted:", response.data);
       })
-      .catch(error => {
-        console.error('Error deleting employee:', error);
+      .catch((error) => {
+        console.error("Error deleting employee:", error);
       });
-    
-      removeItem(id)
-    }
+
+    removeItem(id);
+  };
   return (
     <div className="table-wrapper">
       <table className="table">
@@ -64,11 +48,17 @@ export const Table = ({data}) => {
         </thead>
         <tbody>
           {employees.map((employee, idx) => {
-
-           
             return (
               <tr key={idx}>
-                <td><img id="frame" src={employee.image} alt={employee.image} width="100px" height="100px"/></td>
+                <td>
+                  <img
+                    id="frame"
+                    src={employee.image}
+                    alt={employee.image}
+                    width="100px"
+                    height="100px"
+                  />
+                </td>
                 <td className="expand">{employee.biography}</td>
                 <td>{employee.name}</td>
                 <td>{employee.surname}</td>
@@ -76,9 +66,6 @@ export const Table = ({data}) => {
                 <td>{employee.dateOfBirth}</td>
                 <td>{employee.position}</td>
                 <td>{employee.cellPhone}</td>
-                
-
-
 
                 <td className="fit">
                   <span className="actions">
@@ -98,4 +85,5 @@ export const Table = ({data}) => {
         </tbody>
       </table>
     </div>
-  )}
+  );
+};
