@@ -1,11 +1,23 @@
 require("dotenv").config();
 
 const express = require("express");
-const cors = require("cors");
+//const cors = require("cors");
 const mongoose = require("mongoose");
 const app = express();
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
-app.use(cors());
+// app.use(cors());
+// Enable CORS middleware
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
 app.use(express.json());
 
 mongoose.connect(process.env.MONGO_URI);
@@ -15,37 +27,44 @@ const Employee = require("./models/employees.model");
 app.post("/api/register", async (req, res) => {
   console.log(req.body);
   try {
+    const hashedPassword = await bcrypt.hash(req.body.password, 10);
     await User.create({
       name: req.body.name,
       email: req.body.email,
-      password: req.body.password,
+      password: hashedPassword,
     });
     res.json({ status: "OK" });
   } catch (error) {
-    res.json({ status: error, error: "duplicate email value" });
-  }
-});
-
-app.get("/api/users", async (req, res) => {
-  try {
-    const users = await User.find();
-    res.json(users);
-  } catch (error) {
-    res.json({ status: "error", error: "Failed to fetch users" });
+    res.json({ status: "error", error: "duplicate email value" });
   }
 });
 
 app.post("/api/login", async (req, res) => {
-  console.log(req.body);
   const user = await User.findOne({
     email: req.body.email,
-    password: req.body.password,
   });
 
-  if (user) {
-    res.json({ status: "OK", user: true });
+  if (!user) {
+    return { status: "error", error: "Invalid login" };
+  }
+
+  const isPasswordValid = await bcrypt.compare(
+    req.body.password,
+    user.password
+  );
+
+  if (isPasswordValid) {
+    const token = jwt.sign(
+      {
+        name: user.name,
+        email: user.email,
+      },
+      "secret123"
+    );
+
+    return res.json({ status: "ok", user: token });
   } else {
-    res.json({ status: "error", user: false });
+    return res.json({ status: "error", user: false });
   }
 });
 
@@ -72,13 +91,35 @@ app.post("/api/employees", async (req, res) => {
   }
 });
 
-//   const employee = new Employee(req.body);
-//   const savedEmployee = await employee.save();
-//   res.status(201).json(savedEmployee);
-// } catch (error) {
-//   res.status(400).json({ message: error.message });
-// }
-// });
+app.get("/api/quote", async (req, res) => {
+  const token = req.headers["x-access-token"];
+
+  try {
+    const decoded = jwt.verify(token, "secret123");
+    const email = decoded.email;
+    const user = await User.findOne({ email: email });
+
+    return res.json({ status: "ok", quote: user.quote });
+  } catch (error) {
+    console.log(error);
+    res.json({ status: "error", error: "invalid token" });
+  }
+});
+
+app.post("/api/quote", async (req, res) => {
+  const token = req.headers["x-access-token"];
+
+  try {
+    const decoded = jwt.verify(token, "secret123");
+    const email = decoded.email;
+    await User.updateOne({ email: email }, { $set: { quote: req.body.quote } });
+
+    return res.json({ status: "ok" });
+  } catch (error) {
+    console.log(error);
+    res.json({ status: "error", error: "invalid token" });
+  }
+});
 
 // Get all employees
 app.get("/api/employees", async (req, res) => {
