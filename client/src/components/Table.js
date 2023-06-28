@@ -1,16 +1,18 @@
 import React from "react";
 import axios from "axios";
 import { BsFillTrashFill, BsFillPencilFill } from "react-icons/bs";
-
+import { useSelector } from "react-redux";
 import "./Table.css";
+import { setEmployees, editItem } from "../features/employee/employeeSlice";
 
 export const Table = ({ data }) => {
-  const { employees, setEmployees, editItem } = data;
-
+  // const { createEmployee, updateEmployee, deleteEmployee, fetchEmployeeById } =
+  //  data;
+  const { employees } = useSelector((state) => state.employee);
   console.log("This data is from Table.js");
   console.log(employees);
 
-  axios.defaults.baseURL = "http://localhost:3500";
+  axios.defaults.baseURL = "http://localhost:8000";
 
   const removeItem = (id) => {
     const newEployees = employees.filter((item) => {

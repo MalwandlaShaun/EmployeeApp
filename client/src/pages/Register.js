@@ -4,10 +4,10 @@ import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { register } from "../features/auth/authSlice";
-import { setPassword, setUsername } from "../features/auth/authSlice";
+import { setPassword, setEmail, setName } from "../features/auth/authSlice";
 
 const Register = () => {
-  const { email, password } = useSelector((state) => state.auth);
+  const { name, email, password } = useSelector((state) => state.auth);
   const state = useSelector((state) => state.auth);
   console.log(state);
   const dispatch = useDispatch();
@@ -20,12 +20,14 @@ const Register = () => {
   const handleRegister = () => {
     dispatch(register())
       .then((result) => {
-        if (result.payload.success) {
-          alert("Registration successful!");
-          navigate("/login");
-        } else {
-          alert("Registration failed: Email already exists");
-        }
+        // if (result.payload.success) {
+        //   alert("Registration successful!");
+        //   navigate("/login");
+        // } else {
+        //   console.log("hello, I'm here!!!");
+        //   alert("Registration failed: Email already exists");
+        // }
+        console.log("this is the result: " + result);
       })
       .catch((error) => {
         console.log(error);
@@ -36,10 +38,17 @@ const Register = () => {
       <h1>Register</h1>
       <input
         type="text"
+        placeholder="name"
+        className="input-field"
+        value={name}
+        onChange={(e) => dispatch(setName(e.target.value))}
+      />
+      <input
+        type="text"
         placeholder="Email"
         className="input-field"
         value={email}
-        onChange={(e) => dispatch(setUsername(e.target.value))}
+        onChange={(e) => dispatch(setEmail(e.target.value))}
       />
       <input
         type="password"

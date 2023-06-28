@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
 const initialState = {
+  name: "",
   email: "",
   password: "",
   isLoading: true,
@@ -13,18 +14,20 @@ export const login = createAsyncThunk("auth/login", async (_, thunkAPI) => {
 
   console.log(thunkAPI.getState());
   try {
-    const response = await axios.get("http://localhost:8000/users");
+    const response = await axios.get("http://localhost:8000/api/users");
     const users = response.data;
 
+    console.log(users);
     const matchedUser = users.find(
       (user) => user.email === email && user.password === password
     );
 
-    if (matchedUser) {
-      return { success: true };
-    } else {
-      return { success: false };
-    }
+    console.log(matchedUser);
+    // if (matchedUser) {
+    //   return { success: true };
+    // } else {
+    //   return { success: false };
+    // }
   } catch (error) {
     return thunkAPI.rejectWithValue("Something went wrong");
   }
@@ -33,24 +36,26 @@ export const login = createAsyncThunk("auth/login", async (_, thunkAPI) => {
 export const register = createAsyncThunk(
   "auth/register",
   async (_, thunkAPI) => {
-    const { email, password } = thunkAPI.getState().auth;
+    const { name, email, password } = thunkAPI.getState().auth;
 
     console.log(thunkAPI.getState());
     try {
-      const response = await axios.get("http://localhost:8000/users");
-      const existingUsers = response.data;
+      //const response = await axios.get("http://localhost:8000/api/register");
+      // const existingUsers = response.data;
 
       // Check if email already exists
-      const userExists = existingUsers.some((user) => user.email === email);
-      if (userExists) {
-        return {
-          success: false,
-          error: "Registration failed: Email already exists",
-        };
-      }
+      // const userExists = existingUsers.some((user) => user.email === email);
+      // console.log("userExists : " + userExists);
+      // if (userExists) {
+      //   return {
+      //     success: false,
+      //     error: "Registration failed: Email already exists",
+      //   };
+      //}
 
       // If email doesn't exist, proceed with registration
-      await axios.post("http://localhost:8000/users", {
+      await axios.post("http://localhost:8000/api/register", {
+        name,
         email,
         password,
       });
@@ -66,7 +71,10 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setUsername: (state, action) => {
+    setName: (state, action) => {
+      state.name = action.payload;
+    },
+    setEmail: (state, action) => {
       state.email = action.payload;
     },
     setPassword: (state, action) => {
@@ -99,6 +107,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { setPassword, setUsername, setAuth } = authSlice.actions;
+export const { setPassword, setEmail, setAuth, setName } = authSlice.actions;
 
 export default authSlice.reducer;

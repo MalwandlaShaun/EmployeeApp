@@ -117,6 +117,8 @@ export const {
   setCurrentEmployee,
   setEmployees,
   setSelectedImage,
+  handleImageUpload,
+  editItem,
 } = employeeSlice.actions;
 
 export default employeeSlice.reducer;
