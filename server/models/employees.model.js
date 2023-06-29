@@ -16,7 +16,6 @@ const employee = mongoose.Schema(
     },
     image: {
       type: String,
-      required: true,
     },
     dateOfBirth: {
       type: Date,
@@ -31,26 +30,6 @@ const employee = mongoose.Schema(
       required: true,
     },
     cellPhone: {
-      type: String,
-      required: true,
-    },
-    currentEmployee: {
-      type: Object,
-      required: true,
-    },
-    employees: {
-      type: Array,
-      required: true,
-    },
-    editID: {
-      type: mongoose.Types.ObjectId,
-      required: true,
-    },
-    isEditing: {
-      type: Boolean,
-      required: true,
-    },
-    selectedImage: {
       type: String,
       required: true,
     },

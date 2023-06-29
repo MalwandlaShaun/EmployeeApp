@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const app = express();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const cookieParser = require("cookie-parser");
 
 // app.use(cors());
 // Enable CORS middleware
@@ -18,14 +19,30 @@ app.use((req, res, next) => {
   );
   next();
 });
-app.use(express.json());
+app.use(express.json({ limit: "50mb" }));
+app.use(cookieParser());
+const verifyToken = (req, res, next) => {
+  const token = req.cookies.token;
+
+  if (!token) {
+    return res.status(401).json({ status: "error", message: "Unauthorized" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, "your-secret-key"); // Replace with your own secret key
+    req.user = decoded;
+    next();
+  } catch (error) {
+    return res.status(401).json({ status: "error", message: "Invalid token" });
+  }
+};
 
 mongoose.connect(process.env.MONGO_URI);
 const User = require("./models/user.model");
 const Employee = require("./models/employees.model");
 
 app.post("/api/register", async (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     await User.create({
@@ -38,6 +55,35 @@ app.post("/api/register", async (req, res) => {
     res.json({ status: "error", error: "duplicate email value" });
   }
 });
+
+// app.post("/api/login", async (req, res) => {
+//   const user = await User.findOne({
+//     email: req.body.email,
+//   });
+
+//   if (!user) {
+//     return { status: "error", error: "Invalid login" };
+//   }
+
+//   const isPasswordValid = await bcrypt.compare(
+//     req.body.password,
+//     user.password
+//   );
+
+//   if (isPasswordValid) {
+//     const token = jwt.sign(
+//       {
+//         name: user.name,
+//         email: user.email,
+//       },
+//       process.env.ACCESS_TOKEN_SECRET
+//     );
+
+//     return res.json({ status: "ok", user: token });
+//   } else {
+//     return res.json({ status: "error", user: false });
+//   }
+// });
 
 app.post("/api/login", async (req, res) => {
   const user = await User.findOne({
@@ -59,8 +105,11 @@ app.post("/api/login", async (req, res) => {
         name: user.name,
         email: user.email,
       },
-      "secret123"
+      process.env.ACCESS_TOKEN_SECRET, // Replace with your own secret key
+      { expiresIn: "30d" } // Set the expiration time of the token
     );
+
+    res.cookie("token", token, { maxAge: 30 * 24 * 60 * 60 * 1000 }); // Set the token as a cookie
 
     return res.json({ status: "ok", user: token });
   } else {
@@ -69,6 +118,7 @@ app.post("/api/login", async (req, res) => {
 });
 
 app.post("/api/employees", async (req, res) => {
+  console.log(req.body);
   try {
     await Employee.create({
       name: req.body.name,
@@ -88,36 +138,6 @@ app.post("/api/employees", async (req, res) => {
     res.json({ status: "OK" });
   } catch (error) {
     res.json({ status: error, error: "duplicate email value" });
-  }
-});
-
-app.get("/api/quote", async (req, res) => {
-  const token = req.headers["x-access-token"];
-
-  try {
-    const decoded = jwt.verify(token, "secret123");
-    const email = decoded.email;
-    const user = await User.findOne({ email: email });
-
-    return res.json({ status: "ok", quote: user.quote });
-  } catch (error) {
-    console.log(error);
-    res.json({ status: "error", error: "invalid token" });
-  }
-});
-
-app.post("/api/quote", async (req, res) => {
-  const token = req.headers["x-access-token"];
-
-  try {
-    const decoded = jwt.verify(token, "secret123");
-    const email = decoded.email;
-    await User.updateOne({ email: email }, { $set: { quote: req.body.quote } });
-
-    return res.json({ status: "ok" });
-  } catch (error) {
-    console.log(error);
-    res.json({ status: "error", error: "invalid token" });
   }
 });
 
@@ -161,17 +181,18 @@ app.patch("/api/employees/:id", async (req, res) => {
   }
 });
 
-// Delete an employee
 app.delete("/api/employees/:id", async (req, res) => {
   try {
-    const employee = await Employee.findById(req.params.id);
-    if (employee) {
-      await employee.remove();
+    console.log("Employee ID:", req.params.id);
+    const result = await Employee.deleteOne({ _id: req.params.id });
+    console.log("Delete Result:", result);
+    if (result.deletedCount > 0) {
       res.json({ message: "Employee deleted successfully" });
     } else {
       res.status(404).json({ message: "Employee not found" });
     }
   } catch (error) {
+    console.error("Error deleting employee:", error);
     res.status(500).json({ message: error.message });
   }
 });
