@@ -10,19 +10,30 @@ const initialState = {
 };
 
 export const login = createAsyncThunk("auth/login", async (_, thunkAPI) => {
-  const { email, password } = thunkAPI.getState().auth;
+  // const { email, password } = thunkAPI.getState().auth;
 
   console.log(thunkAPI.getState());
   try {
-    const response = await axios.get("http://localhost:8000/api/users");
-    const users = response.data;
+    const response = await axios.post("http://localhost:8000/api/login");
+    //const users = response.data;
 
-    console.log(users);
-    const matchedUser = users.find(
-      (user) => user.email === email && user.password === password
-    );
+    const data = await response.json();
 
-    console.log(matchedUser);
+    console.log("data is here", data);
+    if (data.user) {
+      localStorage.setItem("token", data.user);
+      alert("Login successful");
+      window.location.href = "/dashboard";
+    } else {
+      alert("Please check your username and password");
+    }
+
+    // console.log(users);
+    // const matchedUser = users.find(
+    //   (user) => user.email === email && user.password === password
+    // );
+
+    // console.log(matchedUser);
     // if (matchedUser) {
     //   return { success: true };
     // } else {

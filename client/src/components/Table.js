@@ -1,38 +1,50 @@
-import React from "react";
+import React, { useEffect } from "react";
 import axios from "axios";
 import { BsFillTrashFill, BsFillPencilFill } from "react-icons/bs";
 import { useSelector } from "react-redux";
 import "./Table.css";
-import { setEmployees, editItem } from "../features/employee/employeeSlice";
+import {
+  setEmployees,
+  setIsEditing,
+  setEditID,
+} from "../features/employee/employeeSlice";
+import { useDispatch } from "react-redux";
 
-export const Table = ({ data }) => {
-  // const { createEmployee, updateEmployee, deleteEmployee, fetchEmployeeById } =
-  //  data;
+export const Table = React.memo(() => {
   const { employees } = useSelector((state) => state.employee);
+
+  useEffect(() => {
+    console.log("updated");
+  }, [employees]);
+  const dispatch = useDispatch();
   console.log("This data is from Table.js");
   console.log(employees);
 
-  axios.defaults.baseURL = "http://localhost:8000";
-
+  const editItem = (id) => {
+    setIsEditing(true);
+    setEditID(id);
+  };
   const removeItem = (id) => {
-    const newEployees = employees.filter((item) => {
-      return item.id !== id;
-    });
-    setEmployees(newEployees);
+    const newEmployees = employees.filter((item) => item._id !== id);
+    dispatch(setEmployees(newEmployees));
   };
 
   const handleDelete = (id) => {
+    console.log(id);
     axios
-      .delete(`/employees/${id}`)
+      .delete(`http://localhost:8000/api/employees/${id}`)
       .then((response) => {
+        alert("Employee deleted");
         console.log("Employee deleted:", response.data);
       })
       .catch((error) => {
+        alert("Error deleting Employee");
         console.error("Error deleting employee:", error);
       });
 
     removeItem(id);
   };
+
   return (
     <div className="table-wrapper">
       <table className="table">
@@ -50,6 +62,8 @@ export const Table = ({ data }) => {
         </thead>
         <tbody>
           {employees.map((employee, idx) => {
+            console.log(employee._id);
+
             return (
               <tr key={idx}>
                 <td>
@@ -73,11 +87,11 @@ export const Table = ({ data }) => {
                   <span className="actions">
                     <BsFillTrashFill
                       className="delete-btn"
-                      onClick={() => handleDelete(employee.id)}
+                      onClick={() => handleDelete(employee._id)}
                     />
                     <BsFillPencilFill
                       className="edit-btn"
-                      onClick={() => editItem(employee.id)}
+                      onClick={() => editItem(employee._id)}
                     />
                   </span>
                 </td>
@@ -86,6 +100,9 @@ export const Table = ({ data }) => {
           })}
         </tbody>
       </table>
+      <form action="/logout?_method=DELETE" method="POST">
+        <button type="submit">Log Out</button>
+      </form>
     </div>
   );
-};
+});

@@ -1,15 +1,20 @@
-require("dotenv").config();
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
 
 const express = require("express");
-//const cors = require("cors");
 const mongoose = require("mongoose");
 const app = express();
-const jwt = require("jsonwebtoken");
+//const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const cookieParser = require("cookie-parser");
+const passport = require("passport");
+const flash = require("express-flash");
+const session = require("express-session");
+const methodOverride = require("method-override");
 
-// app.use(cors());
+const cors = require("cors");
 // Enable CORS middleware
+app.use(cors());
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
@@ -19,30 +24,82 @@ app.use((req, res, next) => {
   );
   next();
 });
+
 app.use(express.json({ limit: "50mb" }));
-app.use(cookieParser());
-const verifyToken = (req, res, next) => {
-  const token = req.cookies.token;
-
-  if (!token) {
-    return res.status(401).json({ status: "error", message: "Unauthorized" });
-  }
-
-  try {
-    const decoded = jwt.verify(token, "your-secret-key"); // Replace with your own secret key
-    req.user = decoded;
-    next();
-  } catch (error) {
-    return res.status(401).json({ status: "error", message: "Invalid token" });
-  }
-};
-
+//app.use(cookieParser());
 mongoose.connect(process.env.MONGO_URI);
 const User = require("./models/user.model");
 const Employee = require("./models/employees.model");
 
-app.post("/api/register", async (req, res) => {
-  // console.log(req.body);
+app.use(flash());
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(methodOverride("_method"));
+
+function checkAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+
+  res.redirect("/login");
+}
+
+function checkNotAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return res.redirect("/");
+  }
+  next();
+}
+
+const initializePassport = require("./passport.config");
+initializePassport(
+  passport,
+  (email) => User.find((user) => user.email === email),
+  (id) => User.find((user) => user.id === id)
+);
+
+// app.get("/dashboard", checkAuthenticated, (req, res) => {
+//   res.render("index.ejs", { name: req.user.name });
+// });
+
+// app.get("/login", checkNotAuthenticated, (req, res) => {
+//   res.render("login.ejs");
+// });
+
+//app.post;
+
+// app.get("/register", checkNotAuthenticated, (req, res) => {
+//   res.render("register.ejs");
+// });
+
+// app.post("/register", checkNotAuthenticated, async (req, res) => {
+//   try {
+//     const hashedPassword = await bcrypt.hash(req.body.password, 10);
+//     users.push({
+//       id: Date.now().toString(),
+//       name: req.body.name,
+//       email: req.body.email,
+//       password: hashedPassword,
+//     });
+//     res.redirect("/login");
+//   } catch {
+//     res.redirect("/register");
+//   }
+// });
+
+app.delete("/logout", (req, res) => {
+  req.logOut();
+  res.redirect("/login");
+});
+
+app.post("/api/register", checkNotAuthenticated, async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     await User.create({
@@ -56,66 +113,15 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
-// app.post("/api/login", async (req, res) => {
-//   const user = await User.findOne({
-//     email: req.body.email,
-//   });
-
-//   if (!user) {
-//     return { status: "error", error: "Invalid login" };
-//   }
-
-//   const isPasswordValid = await bcrypt.compare(
-//     req.body.password,
-//     user.password
-//   );
-
-//   if (isPasswordValid) {
-//     const token = jwt.sign(
-//       {
-//         name: user.name,
-//         email: user.email,
-//       },
-//       process.env.ACCESS_TOKEN_SECRET
-//     );
-
-//     return res.json({ status: "ok", user: token });
-//   } else {
-//     return res.json({ status: "error", user: false });
-//   }
-// });
-
-app.post("/api/login", async (req, res) => {
-  const user = await User.findOne({
-    email: req.body.email,
-  });
-
-  if (!user) {
-    return { status: "error", error: "Invalid login" };
-  }
-
-  const isPasswordValid = await bcrypt.compare(
-    req.body.password,
-    user.password
-  );
-
-  if (isPasswordValid) {
-    const token = jwt.sign(
-      {
-        name: user.name,
-        email: user.email,
-      },
-      process.env.ACCESS_TOKEN_SECRET, // Replace with your own secret key
-      { expiresIn: "30d" } // Set the expiration time of the token
-    );
-
-    res.cookie("token", token, { maxAge: 30 * 24 * 60 * 60 * 1000 }); // Set the token as a cookie
-
-    return res.json({ status: "ok", user: token });
-  } else {
-    return res.json({ status: "error", user: false });
-  }
-});
+app.post(
+  "/api/login",
+  checkNotAuthenticated,
+  passport.authenticate("local", {
+    successRedirect: "/",
+    failureRedirect: "/login",
+    failureFlash: true,
+  })
+);
 
 app.post("/api/employees", async (req, res) => {
   console.log(req.body);
@@ -142,14 +148,14 @@ app.post("/api/employees", async (req, res) => {
 });
 
 // Get all employees
-app.get("/api/employees", async (req, res) => {
-  try {
-    const employees = await Employee.find();
-    res.json(employees);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+// app.get("/api/employees", async (req, res) => {
+//   try {
+//     const employees = await Employee.find();
+//     res.json(employees);
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// });
 
 // Get a specific employee
 app.get("/api/employees/:id", async (req, res) => {

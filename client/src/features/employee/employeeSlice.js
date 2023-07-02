@@ -8,21 +8,13 @@ const initialState = {
   dateOfBirth: "",
   biography: "",
   position: "",
-  cellPhone: "",
+  cellPhone: null,
   currentEmployee: {},
   employees: [],
   editID: null,
   isEditing: false,
   selectedImage: null,
 };
-
-// const initialState = {
-//   name: "",
-//   list: [],
-//   isEditing: false,
-//   editID: null,
-//   alert: { show: false, msg: "", type: "" },
-// };
 
 const employeeSlice = createSlice({
   name: "employee",
@@ -47,7 +39,7 @@ const employeeSlice = createSlice({
       state.position = action.payload;
     },
     setCellPhone: (state, action) => {
-      state.name = action.payload;
+      state.cellPhone = action.payload;
     },
     setCurrentEmployee: (state, action) => {
       state.currentEmployee = action.payload;
@@ -67,42 +59,8 @@ const employeeSlice = createSlice({
     handleImageUpload: (state, action) => {
       setSelectedImage(action.payload);
     },
-    editItem: (state, action) => {
-      setIsEditing(true);
-      setEditID(action.payload);
-    },
   },
 });
-// const todolistSlice = createSlice({
-//   name: "todolist",
-//   initialState,
-//   reducers: {
-//     setName: (state, action) => {
-//       console.log(action.payload);
-//       state.name = action.payload;
-//     },
-
-//     setList: (state, action) => {
-//       console.log(action.payload);
-//       state.list = action.payload;
-//     },
-
-//     setIsEditing: (state, action) => {
-//       state.isEditing = action.payload;
-//     },
-//     setEditID: (state, action) => {
-//       console.log(action.payload);
-//       state.editID = action.payload;
-//     },
-//     setAlert: (state, action) => {
-//       console.log(action.payload);
-//       const { show, msg, type } = action.payload;
-//       state.alert.show = show;
-//       state.alert.msg = msg;
-//       state.alert.type = type;
-//     },
-//   },
-// });
 
 export const {
   setName,
@@ -118,7 +76,6 @@ export const {
   setEmployees,
   setSelectedImage,
   handleImageUpload,
-  editItem,
 } = employeeSlice.actions;
 
 export default employeeSlice.reducer;

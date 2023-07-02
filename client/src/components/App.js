@@ -1,10 +1,10 @@
 import Form from "./Form";
 import DisplayDetails from "./DisplayDetails";
-//import "./App.css";
+import "./App.css";
 import { useEffect } from "react";
 import axios from "axios";
 //import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 //import { login } from "../features/auth/authSlice";
 import { setEmployees } from "../features/employee/employeeSlice";
 //import { useEffect } from "react";
@@ -12,9 +12,10 @@ import { setEmployees } from "../features/employee/employeeSlice";
 function App() {
   const dispatch = useDispatch();
 
+  const { employees } = useSelector((state) => state.employee);
   const fetchEmployees = () => {
     axios
-      .get("http://localhost:8000/employees")
+      .get("http://localhost:8000/api/employees")
       .then((response) => {
         const data = response.data;
         console.log(data);

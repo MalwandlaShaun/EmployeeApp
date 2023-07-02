@@ -1,9 +1,9 @@
 import { useNavigate, Link } from "react-router-dom";
-
+import axios from "axios";
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { register } from "../features/auth/authSlice";
+//import { register } from "../features/auth/authSlice";
 import { setPassword, setEmail, setName } from "../features/auth/authSlice";
 
 const Register = () => {
@@ -17,21 +17,23 @@ const Register = () => {
     // Perform any necessary side effects here when email or password changes
   }, [email, password]);
 
-  const handleRegister = () => {
-    dispatch(register())
-      .then((result) => {
-        // if (result.payload.success) {
-        //   alert("Registration successful!");
-        //   navigate("/login");
-        // } else {
-        //   console.log("hello, I'm here!!!");
-        //   alert("Registration failed: Email already exists");
-        // }
-        console.log("this is the result: " + result);
-      })
-      .catch((error) => {
-        console.log(error);
+  const handleRegister = async () => {
+    try {
+      const response = await axios.post("http://localhost:8000/api/register", {
+        name,
+        email,
+        password,
       });
+
+      const data = response.data;
+      console.log(data);
+      if (data.status === "OK") {
+        // Make sure to use "OK" instead of "ok"
+        navigate("/login");
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
   return (
     <div className="login-container">

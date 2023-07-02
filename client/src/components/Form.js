@@ -1,28 +1,45 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import {
+  setName,
+  setSurname,
+  setEmail,
+  setDateOfBirth,
+  setBiography,
+  setPosition,
+  setCellPhone,
+  setCurrentEmployee,
+  setSelectedImage,
+} from "../features/employee/employeeSlice";
 
-const Form = ({ data }) => {
-  const [name, setName] = useState("");
-  const [surname, setSurname] = useState("");
-  const [email, setEmail] = useState("");
-  // const [image, setImage] = useState(null);
-  const [dateOfBirth, setDateOfBirth] = useState("");
-  const [biography, setBiography] = useState("");
-  const [position, setPosition] = useState("");
-  const [cellPhone, setCellPhone] = useState("");
-  const [currentEmployee, setCurrentEmployee] = useState({});
-  const { employees, editID, isEditing, selectedImage, setSelectedImage } =
-    data;
+const Form = () => {
+  const dispatch = useDispatch();
 
+  const {
+    name,
+    surname,
+    email,
+    dateOfBirth,
+    biography,
+    position,
+    cellPhone,
+    currentEmployee,
+    employees,
+    editID,
+    isEditing,
+    selectedImage,
+  } = useSelector((state) => state.employee);
   useEffect(() => {
     if (isEditing && editID) {
       const employeeToEdit = employees.find(
         (employee) => employee.id === editID
       );
-      setCurrentEmployee(employeeToEdit);
+      dispatch(setCurrentEmployee(employeeToEdit));
     } else {
-      setCurrentEmployee({});
+      dispatch(setCurrentEmployee({}));
     }
   }, [isEditing, editID, employees]);
 
@@ -32,7 +49,7 @@ const Form = ({ data }) => {
 
     reader.onload = () => {
       const image = reader.result;
-      setSelectedImage(image);
+      dispatch(setSelectedImage(image));
     };
 
     if (file) {
@@ -43,7 +60,6 @@ const Form = ({ data }) => {
   const handleSubmit = async () => {
     try {
       const employeeData = {
-        id: new Date().getTime(),
         name,
         surname,
         email,
@@ -55,29 +71,32 @@ const Form = ({ data }) => {
       };
 
       if (isEditing) {
-        await axios.put(`/employees/${currentEmployee.id}`, employeeData);
+        await axios.put(
+          `http://localhost:8000/api/employees/${currentEmployee.id}`,
+          employeeData
+        );
         // Handle successful update
       } else {
-        await axios.post(`/employees`, employeeData);
+        await axios.post(`http://localhost:8000/api/employees`, employeeData);
         // Handle successful create
       }
 
       // Reset the form fields
-      setName("");
-      setSurname("");
-      setEmail("");
-      // setImage(null);
-      setDateOfBirth("");
-      setBiography("");
-      setPosition("");
-      setCellPhone("");
+      dispatch(setName(""));
+      dispatch(setSurname(""));
+      dispatch(setEmail(""));
+      //setImage(null);
+      dispatch(setDateOfBirth(""));
+      dispatch(setBiography(""));
+      dispatch(setPosition(""));
+      dispatch(setCellPhone(""));
     } catch (error) {
       console.error(error);
     }
   };
 
   const submitForm = (event) => {
-    event.preventDefault();
+    //event.preventDefault();
 
     handleSubmit();
   };
@@ -87,9 +106,9 @@ const Form = ({ data }) => {
       <h1>Employee Details</h1>
 
       <form
-        method="post"
-        action="http://localhost:3005/Employee/"
-        runat="server"
+      // method="post"
+      // action="http://localhost:8000/api/employees/"
+      // runat="server"
       >
         <div className="form-content">
           <label htmlFor="name"> Name :</label>
@@ -98,7 +117,7 @@ const Form = ({ data }) => {
             type="text"
             placeholder="Enter Your Name"
             onChange={(event) => {
-              setName(event.target.value);
+              dispatch(setName(event.target.value));
             }}
           />
 
@@ -108,7 +127,7 @@ const Form = ({ data }) => {
             type="text"
             placeholder="Enter Your Surname"
             onChange={(event) => {
-              setSurname(event.target.value);
+              dispatch(setSurname(event.target.value));
             }}
           />
 
@@ -118,7 +137,7 @@ const Form = ({ data }) => {
             type="email"
             placeholder="Enter your Email Adress"
             onChange={(event) => {
-              setEmail(event.target.value);
+              dispatch(setEmail(event.target.value));
             }}
           />
 
@@ -127,7 +146,7 @@ const Form = ({ data }) => {
             id="frame"
             type="file"
             name="image"
-            onChange={handleImageUpload} // Use the handleImageUpload function
+            onChange={(e) => handleImageUpload(e)} // Use the handleImageUpload function
           />
 
           <label htmlFor="name"> Date Of Birth :</label>
@@ -137,7 +156,7 @@ const Form = ({ data }) => {
             name="dob"
             placeholder="Enter your Date Of Birth"
             onChange={(event) => {
-              setDateOfBirth(event.target.value);
+              dispatch(setDateOfBirth(event.target.value));
             }}
           />
 
@@ -149,7 +168,7 @@ const Form = ({ data }) => {
             cols="50"
             placeholder="Enter your Biography"
             onChange={(event) => {
-              setBiography(event.target.value);
+              dispatch(setBiography(event.target.value));
             }}
           ></textarea>
 
@@ -159,7 +178,7 @@ const Form = ({ data }) => {
             type="text"
             placeholder="Enter Your Position"
             onChange={(event) => {
-              setPosition(event.target.value);
+              dispatch(setPosition(event.target.value));
             }}
           />
 
@@ -169,11 +188,15 @@ const Form = ({ data }) => {
             type="number"
             placeholder="Enter Your CellPhone Number"
             onChange={(event) => {
-              setCellPhone(event.target.value);
+              dispatch(setCellPhone(event.target.value));
             }}
           />
 
-          <input type="submit" className="submit-btn" onClick={submitForm} />
+          <input
+            type="submit"
+            className="submit-btn"
+            onClick={(e) => submitForm(e)}
+          />
         </div>
       </form>
     </div>

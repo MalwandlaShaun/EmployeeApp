@@ -1,0 +1,86 @@
+:root {
+    /* Styles for containers */
+    --bgColor-primary: gray;
+    --bgColor-secondry: pink;
+    --container-height: 100vh;
+
+    /* Styles for inputs */
+    --input-width: 22.5vw;
+    --input-height: 2.5vw;
+    --input-padding-left: 1.2vw;
+    --input-bgColor: white;
+    --input-margin-bottom: 0.5vw;
+
+    /* sizes */
+    --main-font-size: 1.5vw;
+    --title-font-size: 4vw;
+
+    /* margins and paddings */
+
+
+    /* Styles for btn */
+    --btn-bgColor: green;
+
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.App {
+    display: flex;
+    background-color: var(--bgColor-primary);
+    height: var(--container-height)
+}
+
+.form-container {
+    width: 30vw;
+    padding: 0 4vw 0 4vw;
+    background-color: var(--bgColor-secondry);
+    height: var(--container-height);
+}
+
+input,
+textarea {
+    width: var(--input-width);
+    height: var(--input-height);
+    background-color: var(--input-bgColor);
+    padding-left: var(--input-padding-left);
+    margin-bottom: var(--input-margin-bottom);
+}
+
+select {
+    width: var(--input-width);
+    height: var(--input-height);
+    background-color: var(--input-bgColor);
+    padding-left: var(--input-padding-left);
+}
+
+#submit-btn {
+    background-color: var(--btn-bgColor);
+
+}
+
+#submit-btn:hover {
+    cursor: pointer;
+}
+
+/* Styles of DisplayTransaction */
+
+.display-header {
+    font-size: var(--title-font-size) !important;
+
+}
+
+.data-mapping {
+    display: flex;
+    justify-content: space-between;
+    width: 40vw;
+    background-color: white;
+}
+
+.data-mapping {
+    font-size: var(--main-font-size);
+}
