@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 //import { login } from "../features/auth/authSlice";
 import { setPassword, setEmail, setAuth } from "../features/auth/authSlice";
 import { useEffect } from "react";
+import logo from "../assets/images/logo.png";
 
 const Login = () => {
   const { email, password } = useSelector((state) => state.auth);
@@ -19,16 +20,16 @@ const Login = () => {
   const handleLogin = async () => {
     // dispatch(login());
 
-    const response = await axios.post("http://localhost:8000/api/login", {
+    const response = await axios.post("http://localhost:8000/api/auth/login", {
       email,
       password,
     });
 
-    const data = await response.data;
+    const userdata = await response.data;
 
-    console.log(data);
-    if (data.user) {
-      localStorage.setItem("token", data.user);
+    console.log(userdata.data);
+    if (userdata.data.user) {
+      localStorage.setItem("token", userdata.token);
       alert("Login successful");
       navigate("/dashboard");
       dispatch(setAuth(true));
@@ -38,46 +39,38 @@ const Login = () => {
     }
   };
 
-  //.then((result) => {
-  // if (result.payload.success) {
-  //   alert("Login successful!");
-  //   navigate("/dashboard");
-  //   dispatch(setAuth());
-  // } else {
-  //   alert("Invalid email or password");
-  // }
-  //console.log(result);
-  // })
-  //.catch((error) => {
-  //   console.log(error);
-  //  });
-
-  // console.log(email, password, login, setPassword);
   return (
-    <div className="login-container">
-      <h1>Login</h1>
+    <div className="dev-container">
+      <div className="login-container">
+        <img
+          src={logo}
+          style={({ width: "5vw" }, { height: "5vw" })}
+          alt="company logo"
+        />
+        <h1 style={{ margin: "2vh" }}>Login</h1>
 
-      <input
-        type="email"
-        placeholder="email"
-        className="input-field"
-        value={email}
-        onChange={(e) => dispatch(setEmail(e.target.value))}
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        className="input-field"
-        value={password}
-        onChange={(e) => dispatch(setPassword(e.target.value))}
-      />
-      <button className="login-button" onClick={() => handleLogin()}>
-        Login
-      </button>
+        <input
+          type="email"
+          placeholder="email"
+          className="input-field"
+          value={email}
+          onChange={(e) => dispatch(setEmail(e.target.value))}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          className="input-field"
+          value={password}
+          onChange={(e) => dispatch(setPassword(e.target.value))}
+        />
+        <button className="login-button" onClick={() => handleLogin()}>
+          Login
+        </button>
 
-      <p>
-        Don't have an account sign up <Link to="/register">here</Link>
-      </p>
+        <p>
+          Don't have an account sign up <Link to="/register">here</Link>
+        </p>
+      </div>
     </div>
   );
 };

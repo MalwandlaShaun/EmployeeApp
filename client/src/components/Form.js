@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import axios from "axios";
 import { useDispatch } from "react-redux";
@@ -11,37 +11,51 @@ import {
   setBiography,
   setPosition,
   setCellPhone,
-  setCurrentEmployee,
+  //setCurrentEmployee,
   setSelectedImage,
 } from "../features/employee/employeeSlice";
 
 const Form = () => {
+  const [currentEmployee, setCurrentEmployee] = useState(null);
+  const [isTyping, setIsTyping] = useState(false);
+
+  const handleInputChange = (event) => {
+    setIsTyping(event.target.value !== "");
+    // Dispatch your Redux action here if needed
+  };
   const dispatch = useDispatch();
 
   const {
     name,
     surname,
     email,
+    image,
     dateOfBirth,
     biography,
     position,
     cellPhone,
-    currentEmployee,
-    employees,
     editID,
     isEditing,
     selectedImage,
   } = useSelector((state) => state.employee);
+
+  const useEmployees = useSelector(
+    (state) => state.employee.employees.employees
+  );
+  console.log("isEditing :", isEditing, editID);
+  console.log("currentEmployee :", currentEmployee);
+  console.log("useEmployees", useEmployees);
   useEffect(() => {
     if (isEditing && editID) {
-      const employeeToEdit = employees.find(
-        (employee) => employee.id === editID
+      const employeeToEdit = useEmployees.find(
+        (employee) => employee._id === editID
       );
-      dispatch(setCurrentEmployee(employeeToEdit));
+      setCurrentEmployee(employeeToEdit);
     } else {
-      dispatch(setCurrentEmployee({}));
+      // dispatch(setCurrentEmployee());
+      return;
     }
-  }, [isEditing, editID, employees]);
+  }, [isEditing, editID, useEmployees]);
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
@@ -60,27 +74,32 @@ const Form = () => {
   const handleSubmit = async () => {
     try {
       const employeeData = {
-        name,
-        surname,
-        email,
-        image: selectedImage, // Use selectedImage in the form data
-        dateOfBirth,
-        biography,
-        position,
-        cellPhone,
+        name: name === "" ? currentEmployee?.name : name,
+        surname: surname === "" ? currentEmployee?.surname : surname,
+        email: email === "" ? currentEmployee?.email : email,
+        image: selectedImage === null ? currentEmployee?.image : selectedImage, // Use selectedImage in the form data
+        dateOfBirth:
+          dateOfBirth === "" ? currentEmployee?.dateOfBirth : dateOfBirth,
+        biography: biography === "" ? currentEmployee?.biography : biography,
+        position: position === "" ? currentEmployee?.position : position,
+        cellPhone: cellPhone === null ? currentEmployee?.cellPhone : cellPhone,
       };
 
       if (isEditing) {
-        await axios.put(
-          `http://localhost:8000/api/employees/${currentEmployee.id}`,
+        await axios.patch(
+          `http://localhost:8000/api/employees/updateEmployee/${currentEmployee._id}`,
           employeeData
         );
         // Handle successful update
       } else {
-        await axios.post(`http://localhost:8000/api/employees`, employeeData);
+        await axios.post(
+          `http://localhost:8000/api/employees/addEmployee`,
+          employeeData
+        );
         // Handle successful create
       }
 
+      //console.log("employeeData : ", employeeData);
       // Reset the form fields
       dispatch(setName(""));
       dispatch(setSurname(""));
@@ -90,13 +109,14 @@ const Form = () => {
       dispatch(setBiography(""));
       dispatch(setPosition(""));
       dispatch(setCellPhone(""));
+      window.location.reload();
     } catch (error) {
       console.error(error);
     }
   };
 
   const submitForm = (event) => {
-    //event.preventDefault();
+    event.preventDefault();
 
     handleSubmit();
   };
@@ -115,7 +135,8 @@ const Form = () => {
           <input
             id="name"
             type="text"
-            placeholder="Enter Your Name"
+            placeholder={isEditing ? currentEmployee?.name : "Enter Your Name"}
+            //value={currentEmployee?.name}
             onChange={(event) => {
               dispatch(setName(event.target.value));
             }}
@@ -125,7 +146,9 @@ const Form = () => {
           <input
             id="surname"
             type="text"
-            placeholder="Enter Your Surname"
+            placeholder={
+              isEditing ? currentEmployee?.surname : "Enter Your Surname"
+            }
             onChange={(event) => {
               dispatch(setSurname(event.target.value));
             }}
@@ -135,7 +158,9 @@ const Form = () => {
           <input
             id="email"
             type="email"
-            placeholder="Enter your Email Adress"
+            placeholder={
+              isEditing ? currentEmployee?.email : "Enter your Email Adress"
+            }
             onChange={(event) => {
               dispatch(setEmail(event.target.value));
             }}
@@ -166,7 +191,9 @@ const Form = () => {
             name="message"
             rows="4"
             cols="50"
-            placeholder="Enter your Biography"
+            placeholder={
+              isEditing ? currentEmployee?.biography : "Enter your Biography"
+            }
             onChange={(event) => {
               dispatch(setBiography(event.target.value));
             }}
@@ -176,7 +203,9 @@ const Form = () => {
           <input
             id="position"
             type="text"
-            placeholder="Enter Your Position"
+            placeholder={
+              isEditing ? currentEmployee?.position : "Enter Your Position"
+            }
             onChange={(event) => {
               dispatch(setPosition(event.target.value));
             }}
@@ -186,7 +215,11 @@ const Form = () => {
           <input
             id="phone"
             type="number"
-            placeholder="Enter Your CellPhone Number"
+            placeholder={
+              isEditing
+                ? currentEmployee?.cellPhone
+                : "Enter Your CellPhone Number"
+            }
             onChange={(event) => {
               dispatch(setCellPhone(event.target.value));
             }}

@@ -18,21 +18,21 @@ export const Table = React.memo(() => {
   }, [employees]);
   const dispatch = useDispatch();
   console.log("This data is from Table.js");
-  console.log(employees);
+  const allEmployees = employees.employees;
 
   const editItem = (id) => {
-    setIsEditing(true);
-    setEditID(id);
+    dispatch(setIsEditing(true));
+    dispatch(setEditID(id));
   };
   const removeItem = (id) => {
-    const newEmployees = employees.filter((item) => item._id !== id);
+    const newEmployees = allEmployees.filter((item) => item._id !== id);
     dispatch(setEmployees(newEmployees));
   };
 
   const handleDelete = (id) => {
     console.log(id);
     axios
-      .delete(`http://localhost:8000/api/employees/${id}`)
+      .delete(`http://localhost:8000/api/employees/deleteEmployee/${id}`)
       .then((response) => {
         alert("Employee deleted");
         console.log("Employee deleted:", response.data);
@@ -61,8 +61,8 @@ export const Table = React.memo(() => {
           </tr>
         </thead>
         <tbody>
-          {employees.map((employee, idx) => {
-            console.log(employee._id);
+          {allEmployees?.map((employee, idx) => {
+            //console.log(employee._id);
 
             return (
               <tr key={idx}>
@@ -79,7 +79,7 @@ export const Table = React.memo(() => {
                 <td>{employee.name}</td>
                 <td>{employee.surname}</td>
                 <td>{employee.email}</td>
-                <td>{employee.dateOfBirth}</td>
+                <td>{employee.dateOfBirth.toString().slice(0, 10)}</td>
                 <td>{employee.position}</td>
                 <td>{employee.cellPhone}</td>
 
@@ -100,9 +100,10 @@ export const Table = React.memo(() => {
           })}
         </tbody>
       </table>
-      <form action="/logout?_method=DELETE" method="POST">
-        <button type="submit">Log Out</button>
-      </form>
+
+      <button type="submit" className="logOutBtn">
+        Log Out
+      </button>
     </div>
   );
 });

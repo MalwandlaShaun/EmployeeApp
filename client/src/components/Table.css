@@ -3,6 +3,7 @@
 }
 
 .table {
+  position: relative;
   display: block;
   overflow: hidden;
   table-layout: fixed;
@@ -10,13 +11,24 @@
   box-shadow: 0px 10px 10px #ccc;
   border-radius: 10px;
   white-space: nowrap;
-  width: 55vw;
+  width: 80vw;
   max-width: 80%;
-  margin: auto;
+  /* margin: auto; */
   table-layout: auto;
   overflow-x: auto;
 }
-
+.logOutBtn {
+  position: absolute;
+  right: 1px;
+  top: 1px;
+  /* padding: 20px; */
+  padding-bottom: 20px;
+  padding-top: 14px;
+  height: 48px;
+  width: 100px;
+  text-align: center;
+  font-size: 14px;
+}
 .table thead {
   background-color: #ccc;
   color: #222;

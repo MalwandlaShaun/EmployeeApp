@@ -1,43 +1,54 @@
-.login-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    align-self: center;
-    justify-content: center;
-    height: 50vh;
-    width: 40vw;
-    margin: auto;
+.dev-container {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  background-color: #ee776e;
+}
 
+.login-container {
+  display: flex;
+  flex-direction: column;
+  /*align-items: space-between; */
+  justify-content: space-between;
+  padding: 5vw;
+  border-radius: 5%;
+  align-items: center;
+  align-self: center;
+  justify-content: center;
+  height: 70vh;
+  width: 40vw;
+  margin: auto;
+  background-color: rgb(243, 168, 82);
 }
 
 .login-form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    width: 300px;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 300px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
 .input-field {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
+  width: 100%;
+  margin-bottom: 1vh;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
 }
 
 .login-button {
-    width: 100%;
-    padding: 10px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
+  width: 100%;
+  padding: 10px;
+  background-color: #436585;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
 }
 
 .login-button:hover {
-    background-color: #0056b3;
+  background-color: #0056b3;
 }

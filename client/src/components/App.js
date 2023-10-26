@@ -15,7 +15,7 @@ function App() {
   const { employees } = useSelector((state) => state.employee);
   const fetchEmployees = () => {
     axios
-      .get("http://localhost:8000/api/employees")
+      .get("http://localhost:8000/api/employees/getAllEmployees")
       .then((response) => {
         const data = response.data;
         console.log(data);
