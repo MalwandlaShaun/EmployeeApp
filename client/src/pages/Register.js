@@ -14,20 +14,21 @@ const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Perform any necessary side effects here when email or password changes
-  }, [email, password]);
+  // useEffect(() => {
+  //   // Perform any necessary side effects here when email or password changes
+  // }, [email, password]);
+  const API = axios.create({
+    baseURL: "https://employee-app4.onrender.com",
+    withCredentials: true,
+  });
 
   const handleRegister = async () => {
     try {
-      const response = await axios.post(
-        "https://employee-app4.onrender.com/api/auth/register",
-        {
-          name,
-          email,
-          password,
-        }
-      );
+      const response = await axios.post(`${API}/api/auth/register`, {
+        name,
+        email,
+        password,
+      });
 
       const data = response.data;
       console.log(data);

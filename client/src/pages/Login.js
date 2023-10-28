@@ -18,6 +18,10 @@ const Login = ({ data }) => {
   console.log("login in : ", useAuth().isLogin);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const API = axios.create({
+    baseURL: "https://employee-app4.onrender.com",
+    withCredentials: true,
+  });
 
   // useEffect(() => {}, [email, password]);
 
@@ -25,13 +29,10 @@ const Login = ({ data }) => {
     // dispatch(login());
 
     try {
-      const response = await axios.post(
-        "https://employee-app4.onrender.com/api/auth/login",
-        {
-          email,
-          password,
-        }
-      );
+      const response = await axios.post(`${API}/api/auth/login`, {
+        email,
+        password,
+      });
 
       const userdata = await response.data;
 
