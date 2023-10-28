@@ -53,7 +53,9 @@ export const Table = React.memo(({ data }) => {
   const handleDelete = (id) => {
     console.log(id);
     axios
-      .delete(`http://localhost:8000/api/employees/deleteEmployee/${id}`)
+      .delete(
+        `https://employee-app4.onrender.com/api/employees/deleteEmployee/${id}`
+      )
       .then((response) => {
         alert("Employee deleted");
         console.log("Employee deleted:", response.data);

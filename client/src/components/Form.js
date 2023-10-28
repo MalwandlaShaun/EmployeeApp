@@ -87,13 +87,13 @@ const Form = () => {
 
       if (isEditing) {
         await axios.patch(
-          `http://localhost:8000/api/employees/updateEmployee/${currentEmployee._id}`,
+          `https://employee-app4.onrender.com/api/employees/updateEmployee/${currentEmployee._id}`,
           employeeData
         );
         // Handle successful update
       } else {
         await axios.post(
-          `http://localhost:8000/api/employees/addEmployee`,
+          `https://employee-app4.onrender.com/api/employees/addEmployee`,
           employeeData
         );
         // Handle successful create
@@ -127,7 +127,7 @@ const Form = () => {
 
       <form
       // method="post"
-      // action="http://localhost:8000/api/employees/"
+      // action="https://employee-app4.onrender.com/api/api/employees/"
       // runat="server"
       >
         <div className="form-content">

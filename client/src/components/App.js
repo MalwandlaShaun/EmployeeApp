@@ -15,7 +15,7 @@ function App({ data }) {
   const { employees } = useSelector((state) => state.employee);
   const fetchEmployees = () => {
     axios
-      .get("http://localhost:8000/api/employees/getAllEmployees")
+      .get("https://employee-app4.onrender.com/api/employees/getAllEmployees")
       .then((response) => {
         const data = response.data;
         console.log(data);
@@ -30,7 +30,7 @@ function App({ data }) {
   // Fetch a single employee by ID
   const fetchEmployeeById = (employeeId) => {
     axios
-      .get(`http://localhost:8000/api/employees/${employeeId}`)
+      .get(`https://employee-app4.onrender.com/api/employees/${employeeId}`)
       .then((response) => {
         const employee = response.data;
         console.log(employee);
@@ -46,7 +46,7 @@ function App({ data }) {
   // Create an employee
   const createEmployee = (employeeData) => {
     axios
-      .post("http://localhost:8000/api/employees", employeeData)
+      .post("https://employee-app4.onrender.com/api/employees", employeeData)
       .then((response) => {
         const createdEmployee = response.data;
         console.log(createdEmployee);
@@ -62,7 +62,10 @@ function App({ data }) {
   // Update an employee
   const updateEmployee = (employeeId, employeeData) => {
     axios
-      .patch(`http://localhost:8000/api/employees/${employeeId}`, employeeData)
+      .patch(
+        `https://employee-app4.onrender.com/api/employees/${employeeId}`,
+        employeeData
+      )
       .then((response) => {
         const updatedEmployee = response.data;
         console.log(updatedEmployee);
@@ -78,7 +81,7 @@ function App({ data }) {
   // Delete an employee
   const deleteEmployee = (employeeId) => {
     axios
-      .delete(`http://localhost:8000/api/employees/${employeeId}`)
+      .delete(`https://employee-app4.onrender.com/api/employees/${employeeId}`)
       .then((response) => {
         console.log(response.data);
 
