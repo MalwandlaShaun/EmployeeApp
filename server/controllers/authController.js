@@ -68,14 +68,14 @@ const logIn = async (req, res, next) => {
   console.log("reached here at req.body");
   try {
     const user = await User.findOne({ email: email });
-    if (!user) return next(new AppError("User not found", 404));
+    if (!user) return res.status(404).send("User not found");
     console.log("found one here at user.findOne");
     console.log(user);
     const isPasswordCorrect = await bcrypt.compare(
       req.body.password,
       user.password
     );
-    if (!isPasswordCorrect) return next(new AppError("Invalid password", 404));
+    if (!isPasswordCorrect) return res.status(404).send("Invalid password");
 
     const token = Jwt.sign(
       { id: user._id, isAdmin: user.isAdmin },

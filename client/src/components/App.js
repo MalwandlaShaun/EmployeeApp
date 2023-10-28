@@ -9,9 +9,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { setEmployees } from "../features/employee/employeeSlice";
 //import { useEffect } from "react";
 
-function App() {
+function App({ data }) {
   const dispatch = useDispatch();
-
+  console.log("data table : ", data);
   const { employees } = useSelector((state) => state.employee);
   const fetchEmployees = () => {
     axios
@@ -106,6 +106,7 @@ function App() {
           updateEmployee,
           deleteEmployee,
           fetchEmployeeById,
+          data,
         }}
       />
     </div>

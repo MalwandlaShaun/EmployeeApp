@@ -9,16 +9,24 @@ import {
   setEditID,
 } from "../features/employee/employeeSlice";
 import { useDispatch } from "react-redux";
+import { useNavigate, Link } from "react-router-dom";
+import { setAuth } from "../features/auth/authSlice";
+import useAuth from "../hooks/useAuth";
 
-export const Table = React.memo(() => {
+export const Table = React.memo(({ data }) => {
   const { employees } = useSelector((state) => state.employee);
+  //console.log("data : ", data);
+  // const { setIsLogin } = data.data;
+  // useEffect(() => {
+  //   console.log("updated");
+  // }, [employees]);
 
-  useEffect(() => {
-    console.log("updated");
-  }, [employees]);
+  const { setIsLogin } = useAuth();
   const dispatch = useDispatch();
   console.log("This data is from Table.js");
   const allEmployees = employees.employees;
+
+  const navigate = useNavigate();
 
   const editItem = (id) => {
     dispatch(setIsEditing(true));
@@ -27,6 +35,19 @@ export const Table = React.memo(() => {
   const removeItem = (id) => {
     const newEmployees = allEmployees.filter((item) => item._id !== id);
     dispatch(setEmployees(newEmployees));
+  };
+
+  const handleLogOut = function logout() {
+    // Clear the JWT token from the client
+    // localStorage.removeItem("token"); // Or use sessionStorage
+    // localStorage.removeItem("user");
+    localStorage.clear();
+    // Redirect to the login page or perform any other post-logout actions
+    // For example:
+    setIsLogin(false);
+    dispatch(setAuth(false));
+    navigate("/login");
+    // window.location.href = "/login";
   };
 
   const handleDelete = (id) => {
@@ -101,7 +122,7 @@ export const Table = React.memo(() => {
         </tbody>
       </table>
 
-      <button type="submit" className="logOutBtn">
+      <button type="submit" className="logOutBtn" onClick={handleLogOut}>
         Log Out
       </button>
     </div>

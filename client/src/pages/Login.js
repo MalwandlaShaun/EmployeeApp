@@ -5,37 +5,50 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 //import { login } from "../features/auth/authSlice";
 import { setPassword, setEmail, setAuth } from "../features/auth/authSlice";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import logo from "../assets/images/logo.png";
-
-const Login = () => {
+import useAuth from "../hooks/useAuth";
+const Login = ({ data }) => {
   const { email, password } = useSelector((state) => state.auth);
   const state = useSelector((state) => state.auth);
+
+  // const { setIsLogin } = data;
   // console.log(state);
+  //const { setIsLogin } = useAuth();
+  console.log("login in : ", useAuth().isLogin);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  useEffect(() => {}, [email, password]);
+  // useEffect(() => {}, [email, password]);
 
   const handleLogin = async () => {
     // dispatch(login());
 
-    const response = await axios.post("http://localhost:8000/api/auth/login", {
-      email,
-      password,
-    });
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/api/auth/login",
+        {
+          email,
+          password,
+        }
+      );
 
-    const userdata = await response.data;
+      const userdata = await response.data;
 
-    console.log(userdata.data);
-    if (userdata.data.user) {
-      localStorage.setItem("token", userdata.token);
-      alert("Login successful");
-      navigate("/dashboard");
-      dispatch(setAuth(true));
-      console.log(state);
-    } else {
-      alert("Please check your username and password");
+      console.log(userdata.data);
+      if (userdata.data.user) {
+        localStorage.setItem("token", userdata.token);
+        // setIsLogin(true);
+        navigate("/dashboard");
+        //setIsLogin(true);
+        alert("Login successful");
+        dispatch(setAuth(true));
+        console.log(state);
+      } else {
+        alert("Please check your username and password");
+      }
+    } catch (error) {
+      alert("Please check your username and password", error);
     }
   };
 
