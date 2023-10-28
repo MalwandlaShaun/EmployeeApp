@@ -33,7 +33,7 @@ const app = express();
 // });
 app.use(
   cors({
-    origin: ["https://employee-3rotgqk27-malwandlashaun.vercel.app/"],
+    origin: ["https://employee-app-delta.vercel.app"],
     methods: ["POST", "GET", "DELETE", "PATCH"],
     credentials: true,
   })
